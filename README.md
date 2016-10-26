@@ -17,7 +17,7 @@ cd /path/to/website && wp --allow-root wp-encrypt-cli
 
 ## Setup cron task (manually)
 ```
-0 0 1 * * cd /path/to/website && /usr/local/bin/wp --allow-root wp-encrypt
+0 0 1 * * cd /path/to/website && /usr/local/bin/wp --allow-root wp-encrypt-cli
 ```
 
 ## Setup nginx config (manually)
