@@ -9,9 +9,6 @@ Author URI: http://ircf.fr/
 License: GPL2
 */
 
-// Usage     : cd /path/to/website && wp --allow-root wp-encrypt-cli
-// Cron task : 0 0 1 * * cd /path/to/website && /usr/local/bin/wp --allow-root wp-encrypt
-
 // Check configuration
 if (exec('which certbot-auto') == '') throw new Exception('certbot is required');
 if (exec('which wp') == '') throw new Exception('wp cli is required');
