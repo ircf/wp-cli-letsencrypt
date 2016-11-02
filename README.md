@@ -10,14 +10,15 @@ This plugin generates a single SAN SSL Certificate from each domain in a WordPre
 - Download wp-encrypt-cli to wp-content/plugins
 - Enable plugin for network
 
-## Usage
+## Usage (manually)
+After creating a new website you should run the following command line :
 ```
 cd /path/to/website && wp --allow-root wp-encrypt-cli
 ```
 
 ## Setup cron task (manually)
 ```
-0 0 1 * * certbot-auto renew
+0 * * * * /usr/local/bin/certbot-auto renew --pre-hook "service nginx stop" --post-hook "service nginx start"
 ```
 
 ## Setup nginx config (manually)
