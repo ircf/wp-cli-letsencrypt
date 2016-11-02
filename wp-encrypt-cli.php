@@ -10,11 +10,18 @@ License: GPL2
 */
 
 // Usage     : cd /path/to/website && wp --allow-root wp-encrypt-cli
-// Cron task : 0 0 1 * * cd /path/to/website && /usr/local/bin/wp --allow-root wp-encrypt
+// Cron task : 0 0 1 * * certbot-auto renew
 
 // Check configuration
 if (exec('which certbot-auto') == '') throw new Exception('certbot is required');
 if (exec('which wp') == '') throw new Exception('wp cli is required');
+
+// Let's encrypt cleaner helper
+// Warning : this removes ALL let's encrypt config from server
+// TODO fix --expand and remove this
+function wp_encrypt_cli_clean(){
+  exec('cd /etc/letsencrypt && rm -rf live/* renewal/* archive/* csr/* keys/*');
+}
 
 // Domains helper
 function wp_encrypt_cli_domains($opts = array()){
@@ -42,7 +49,7 @@ function wp_encrypt_cli_certbot($domains){
   $document_root = ABSPATH;
   if (is_array($domains)) $domains = implode(' -d ', $domains);
   if (!empty($domains)) $domains = '-d ' . $domains;
-  $cmd = "certbot-auto certonly --non-interactive --force-renewal --allow-subset-of-names --webroot -m $email -w $document_root -d $network_domain $domains";
+  $cmd = "certbot-auto certonly --non-interactive --allow-subset-of-names --expand --force-renewal --webroot -m $email -w $document_root -d $network_domain $domains";
   return exec($cmd);
 }
 
@@ -50,6 +57,7 @@ function wp_encrypt_cli_certbot($domains){
 function wp_encrypt_cli_command(){
   $opts = array(); // TODO get $opts from $argv
   $domains = wp_encrypt_cli_domains($opts);
+  wp_encrypt_cli_clean();
   $result = wp_encrypt_cli_certbot($domains);
   if ($result){
     WP_CLI::success( $result );
