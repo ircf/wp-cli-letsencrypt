@@ -1,6 +1,6 @@
 # wp-encrypt-cli
 
-This plugin generates a single SAN SSL Certificate from each domain in a WordPress network from CLI.
+This plugin generates a single SAN SSL Certificate with all domains in a WordPress network from CLI.
 
 This plugin does NOT provide a web interface like wp-encrypt does, for many reasons :
 - wp-encrypt does that just fine, but :
