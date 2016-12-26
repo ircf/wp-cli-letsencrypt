@@ -36,7 +36,7 @@ This command has to be executed once after install and after creating a new webs
 cd /path/to/website && wp --allow-root wp-encrypt-cli && service nginx reload
 ```
 
-### Setup cron task (manually, once for all)
+### Setup cron task
 
 Add this command line to your crontab (```crontab -e```) :
 
