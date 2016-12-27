@@ -2,12 +2,17 @@
 
 This plugin generates a single SAN SSL Certificate with all domains in a WordPress network from CLI.
 
+Network subdomains and domains from wp_domain_mapping can be optionally included (see Setup the certificate).
+
 This plugin does NOT provide a web interface like wp-encrypt does, for many reasons :
 - wp-encrypt does that just fine, but :
 - giving write access to your SSL certificates from web is NOT recommended
 - generating a large SAN (100+ domains) from web may not work (timeout)
 - after generating your SAN certificate you need to reload your web server, this can't/shouldn't be done from web
 - CLI is required to setup and renew your SSL certificate, so why not using it for generating it ?
+
+WARNING : If you have any existing SSL Let's encrypt certificate on your server, this plugin will remove them !
+If you plan to use multiple Let's encrypt certificates on your server, we recommend NOT to use this plugin for now.
 
 ## Requirements
 - Certbot (Let's Encrypt client)
@@ -31,9 +36,17 @@ chmod a+x wp
 
 ### Setup the certificate
 
-This command has to be executed once after install and after creating a new website on your WP network :
+The following command has to be executed once after install and each time after creating a new website on your WP network,
+in order to create or update your SAN SSL certificate :
 ```
 cd /path/to/website && wp --allow-root wp-encrypt-cli && service nginx reload
+```
+
+By default the certificate won't include network subdomains and domains from wp_domain_mapping.
+Run the help command if you want to list available options :
+
+```
+cd /path/to/website && wp --allow-root help wp-encrypt-cli
 ```
 
 ### Setup cron task

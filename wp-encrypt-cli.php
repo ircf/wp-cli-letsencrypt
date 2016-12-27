@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: WP Encrypt CLI
-Plugin URI: http://ircf.fr/
+Plugin URI: https://ircf.fr/
 Description: A simple CLI SSL certificate generator for WordPress network.
 Version: 0.1
 Author: IRCF
-Author URI: http://ircf.fr/
+Author URI: https://ircf.fr/
 License: GPL2
 */
 
@@ -51,9 +51,8 @@ function wp_encrypt_cli_certbot($domains){
 }
 
 // CLI command
-function wp_encrypt_cli_command(){
-  $opts = array(); // TODO get $opts from $argv
-  $domains = wp_encrypt_cli_domains($opts);
+function wp_encrypt_cli_command($args, $assoc_args){
+  $domains = wp_encrypt_cli_domains($assoc_args);
   wp_encrypt_cli_clean();
   $result = wp_encrypt_cli_certbot($domains);
   if ($result){
@@ -61,5 +60,25 @@ function wp_encrypt_cli_command(){
   }
 }
 if (class_exists('WP_CLI')){
-  WP_CLI::add_command('wp-encrypt-cli', 'wp_encrypt_cli_command');
+  WP_CLI::add_command('wp-encrypt-cli', 'wp_encrypt_cli_command', array(
+    'shortdesc' => 'Generate a SAN SSL certificate for the whole WP network, using Let\'s Encrypt client.',
+    'synopsis' => array(
+      array(
+        'type'     => 'assoc',
+        'name'     => 'mapping',
+        'description' => 'include domains from wp_domain_mapping (not recommended)',
+        'optional' => true,
+        'default'  => false,
+        'options'  => array( false, true ),
+      ),
+      array(
+        'type'     => 'assoc',
+        'name'     => 'subdomains',
+        'description' => 'include network subdomains (e.g. website.yournetwork.com)',
+        'optional' => true,
+        'default'  => false,
+        'options'  => array( false, true ),
+      ),
+    ),
+  ));
 }
