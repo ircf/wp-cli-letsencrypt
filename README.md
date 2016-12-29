@@ -75,7 +75,7 @@ Add this command line to your crontab (```crontab -e```) :
 0 0 * * * /usr/local/bin/certbot-auto renew --pre-hook "service nginx stop" --post-hook "service nginx start"
 ```
 
-Each day at midnight certbot-auto will check, renew your certificate and restart nginx ONLY if needed.
+Each day at midnight Certbot will check, renew your certificate and restart nginx ONLY if needed (~ each 3 month).
 
 ### Setup SSL in nginx config
 
