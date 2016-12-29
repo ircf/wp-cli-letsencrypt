@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: WP Encrypt CLI
+Plugin Name: WP CLI Let's Encrypt
 Plugin URI: https://ircf.fr/
 Description: A simple CLI SSL certificate generator for WordPress network.
 Version: 0.1
@@ -16,12 +16,12 @@ if (exec('which wp') == '') throw new Exception('wp cli is required');
 // Let's encrypt cleaner helper
 // Warning : this removes ALL let's encrypt config from server
 // TODO fix --expand and remove this
-function wp_encrypt_cli_clean(){
+function wp_cli_letsencrypt_clean(){
   exec('cd /etc/letsencrypt && rm -rf live/* renewal/* archive/* csr/* keys/*');
 }
 
 // Domains helper
-function wp_encrypt_cli_domains($opts = array()){
+function wp_cli_letsencrypt_domains($opts = array()){
   if (!isset($opts['mapping'])) $opts['mapping'] = false;
   if (!isset($opts['subdomains'])) $opts['subdomains'] = false;
   global $wpdb;
@@ -40,7 +40,7 @@ function wp_encrypt_cli_domains($opts = array()){
 }
 
 // Certbot helper
-function wp_encrypt_cli_certbot($domains){
+function wp_cli_letsencrypt_certbot($domains){
   $network_domain = DOMAIN_CURRENT_SITE;
   $email = get_option('admin_email');
   $document_root = ABSPATH;
@@ -51,16 +51,16 @@ function wp_encrypt_cli_certbot($domains){
 }
 
 // CLI command
-function wp_encrypt_cli_command($args, $assoc_args){
-  $domains = wp_encrypt_cli_domains($assoc_args);
-  wp_encrypt_cli_clean();
-  $result = wp_encrypt_cli_certbot($domains);
+function wp_cli_letsencrypt_command($args, $assoc_args){
+  $domains = wp_cli_letsencrypt_domains($assoc_args);
+  wp_cli_letsencrypt_clean();
+  $result = wp_cli_letsencrypt_certbot($domains);
   if ($result){
     WP_CLI::success( $result );
   }
 }
 if (class_exists('WP_CLI')){
-  WP_CLI::add_command('wp-encrypt-cli', 'wp_encrypt_cli_command', array(
+  WP_CLI::add_command('letsencrypt', 'wp_cli_letsencrypt_command', array(
     'shortdesc' => 'Generate a SAN SSL certificate for the whole WP network, using Let\'s Encrypt client.',
     'synopsis' => array(
       array(

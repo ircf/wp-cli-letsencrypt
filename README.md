@@ -1,4 +1,4 @@
-# wp-encrypt-cli
+# wp-cli-letsencrypt
 
 This plugin generates a single SAN SSL Certificate with all domains in a WordPress network from CLI.
 
@@ -29,24 +29,42 @@ wget -O wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.
 chmod a+x wp
 ```
 ## Install
-- Download wp-encrypt-cli to wp-content/plugins
+- Download wp-cli-letsencrypt to wp-content/plugins
 - Enable plugin for network
 
 ## Setup and usage with nginx
 
-### Setup the certificate
+### Setup ACME challenge in nginx config
+
+For Let's Encrypt to deliver your certificate, you need to setup a challenge URL in your web server :
+Add the following location block to your nginx vhost (```nano /etc/nginx/sites-enabled/yourdomain```) :
+
+```
+server {
+  ...
+  # allow let's encrypt acme challenge
+  location ^~ /.well-known/acme-challenge/ {
+    allow all;
+  }
+  ...
+}
+```
+
+And reload nginx (```service nginx reload```)
+
+### Create the certificate
 
 The following command has to be executed once after install and each time after creating a new website on your WP network,
 in order to create or update your SAN SSL certificate :
 ```
-cd /path/to/website && wp --allow-root wp-encrypt-cli && service nginx reload
+cd /path/to/website && wp --allow-root letsencrypt && service nginx reload
 ```
 
 By default the certificate won't include network subdomains and domains from wp_domain_mapping.
 Run the help command if you want to list available options :
 
 ```
-cd /path/to/website && wp --allow-root help wp-encrypt-cli
+cd /path/to/website && wp --allow-root help letsencrypt
 ```
 
 ### Setup cron task
@@ -57,23 +75,21 @@ Add this command line to your crontab (```crontab -e```) :
 0 * * * * /usr/local/bin/certbot-auto renew --pre-hook "service nginx stop" --post-hook "service nginx start"
 ```
 
-### Setup nginx config
+### Setup SSL in nginx config
 
-Add the SSL directives and challenge location to your nginx vhost (```nano /etc/nginx/sites-enabled/yourdomain```) :
+Add the SSL directives to your nginx vhost (```nano /etc/nginx/sites-enabled/yourdomain```) :
 
 ```
 server {
-	listen 80;
-	listen 443 ssl;
-	ssl_certificate /etc/letsencrypt/live/yourdomain/fullchain.pem;
-	ssl_certificate_key /etc/letsencrypt/live/yourdomain/privkey.pem;
-	
-	# allow let's encrypt acme challenge
-        location ^~ /.well-known/acme-challenge/ {
-	    allow all;
-	}
-	...
+  listen 80;
+  listen 443 ssl;
+  ssl_certificate /etc/letsencrypt/live/yourdomain/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/yourdomain/privkey.pem;
+  ...
 }
 ```
 
-And restart nginx (```service nginx reload```)
+And reload nginx (```service nginx reload```)
+
+That's it ! Now to switch all your websites to HTTPS, you have to change the blog URL
+in WordPress and your theme, or just use a plugin like Really Simple SSL that will do the job for you.

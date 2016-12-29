@@ -1,0 +1,20 @@
+{
+  "name": "wp-cli/letsencrypt",
+  "description": "Generate a SAN SSL for your WordPress network using Let's Encrypt",
+  "type": "wp-cli-package",
+  "homepage": "https://github.com/ircf/wp-cli-letsencrypt",
+  "license": "GPL2",
+  "authors": [
+        {
+                "name": "IRCF",
+                "email": "technique@ircf.fr",
+                "homepage": "https://ircf.fr"
+            }
+        ],
+  "require": {
+    "php": ">=5.4"
+  },
+  "autoload": {
+    "files": [ "wp-cli-letsencrypt.php" ]
+  }
+}
