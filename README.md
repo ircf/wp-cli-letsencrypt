@@ -72,8 +72,10 @@ cd /path/to/website && wp --allow-root help letsencrypt
 Add this command line to your crontab (```crontab -e```) :
 
 ```
-0 * * * * /usr/local/bin/certbot-auto renew --pre-hook "service nginx stop" --post-hook "service nginx start"
+0 0 * * * /usr/local/bin/certbot-auto renew --pre-hook "service nginx stop" --post-hook "service nginx start"
 ```
+
+Each day at midnight certbot-auto will check, renew your certificate and restart nginx ONLY if needed.
 
 ### Setup SSL in nginx config
 
@@ -91,7 +93,7 @@ server {
 
 And reload nginx (```service nginx reload```)
 
-That's it ! Now to switch all your websites to HTTPS, you have to change the blog URL.
+That's it ! Now to switch all your websites to HTTPS, you have to change the blog URL 
 in WordPress and your theme, or just use a plugin like [Really Simple SSL](https://fr.wordpress.org/plugins/really-simple-ssl/) that will do the job for you.
 
-You can also find [tutorials to optimize you ssl config](https://bjornjohansen.no/optimizing-https-nginx).
+You can also follow [tutorials to optimize you ssl config](https://bjornjohansen.no/optimizing-https-nginx).
