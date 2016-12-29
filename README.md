@@ -1,10 +1,10 @@
 # wp-cli-letsencrypt
 
-This plugin generates a single SAN SSL Certificate with all domains in a WordPress network from CLI.
+This plugin generates a single SAN SSL Certificate with all domains in a WordPress network from CLI using [Let's Encrypt](https://letsencrypt.org/).
 
-Network subdomains and domains from wp_domain_mapping can be optionally included (see Setup the certificate).
+Network subdomains and domains from [WordPress MU Domain Mapping](https://wordpress.org/plugins/wordpress-mu-domain-mapping/) can be optionally included (see Create the certificate).
 
-This plugin does NOT provide a web interface like wp-encrypt does, for many reasons :
+This plugin does NOT provide a web interface like [WP Encrypt](https://fr.wordpress.org/plugins/wp-encrypt/) does, for many reasons :
 - wp-encrypt does that just fine, but :
 - giving write access to your SSL certificates from web is NOT recommended
 - generating a large SAN (100+ domains) from web may not work (timeout)
@@ -91,5 +91,7 @@ server {
 
 And reload nginx (```service nginx reload```)
 
-That's it ! Now to switch all your websites to HTTPS, you have to change the blog URL
-in WordPress and your theme, or just use a plugin like Really Simple SSL that will do the job for you.
+That's it ! Now to switch all your websites to HTTPS, you have to change the blog URL.
+in WordPress and your theme, or just use a plugin like [Really Simple SSL](https://fr.wordpress.org/plugins/really-simple-ssl/) that will do the job for you.
+
+You can also find [tutorials to optimize you ssl config](https://bjornjohansen.no/optimizing-https-nginx).
