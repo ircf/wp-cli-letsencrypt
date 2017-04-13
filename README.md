@@ -20,6 +20,7 @@ If you plan to use multiple Let's encrypt certificates on your server, we recomm
 cd /usr/local/bin/
 wget https://dl.eff.org/certbot-auto
 chmod a+x certbot-auto
+certbot-auto register --agree-tos
 ```
 
 - WP CLI
