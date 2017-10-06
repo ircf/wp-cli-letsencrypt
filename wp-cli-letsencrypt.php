@@ -20,23 +20,50 @@ function wp_cli_letsencrypt_clean(){
   exec('cd /etc/letsencrypt && rm -rf live/* renewal/* archive/* csr/* keys/*');
 }
 
-// Domains helper
+// Domains helpers
 function wp_cli_letsencrypt_domains($opts = array()){
   if (!isset($opts['mapping'])) $opts['mapping'] = false;
   if (!isset($opts['subdomains'])) $opts['subdomains'] = false;
+  if (!isset($opts['https-only'])) $opts['https-only'] = false;
+  if (!isset($opts['with-www'])) $opts['with-www'] = false;
   global $wpdb;
-  $domains = $wpdb->get_col($sql = "
-    SELECT DISTINCT tmp.domain FROM (
-      SELECT domain FROM $wpdb->blogs WHERE spam=0 AND deleted=0 AND archived=0
+  $rows = $wpdb->get_results("
+    SELECT DISTINCT tmp.blog_id, tmp.domain, tmp.mapping FROM (
+      SELECT blog_id, domain, 0 AS mapping FROM $wpdb->blogs WHERE spam=0 AND deleted=0 AND archived=0
       ".($opts['mapping'] ? "UNION
-      SELECT domain FROM wp_domain_mapping WHERE EXISTS(
+      SELECT blog_id, domain, 1 AS mapping FROM wp_domain_mapping WHERE EXISTS(
         SELECT 1 FROM $wpdb->blogs WHERE $wpdb->blogs.spam=0 AND $wpdb->blogs.deleted=0 AND $wpdb->blogs.archived=0 AND $wpdb->blogs.blog_id=wp_domain_mapping.blog_id
       )" : "")."
     ) AS tmp
     WHERE domain<>'".DOMAIN_CURRENT_SITE."' ".($opts['subdomains'] ? "" : "AND domain NOT LIKE '%.".DOMAIN_CURRENT_SITE."'")."
     ORDER BY tmp.domain
-  ");
+  ", ARRAY_A);
+  $domains = array();
+  foreach($rows as $row){
+    $domains[$row['blog_id'] . ($row['mapping'] ? '_' . $row['domain'] : '')] = $row['domain'];
+  }
+  if ($opts['https-only']) $domains = wp_cli_letsencrypt_domains_https_only($domains);
+  if ($opts['with-www']) $domains = array_merge($domains, wp_cli_letsencrypt_domains_with_www($domains));
   return $domains;
+}
+function wp_cli_letsencrypt_domains_https_only($domains){
+  global $wpdb;
+  $https_domains = array();
+  foreach($domains as $blog_id => $domain){
+    if (!ctype_digit(''.$blog_id)) continue; // TODO domain mapping support
+    switch_to_blog($blog_id);
+    $is_https = !!$wpdb->get_var( "SELECT 1 FROM $wpdb->options WHERE option_name='siteurl' AND option_value LIKE 'https://%'" );
+    restore_current_blog();
+    if ($is_https) $https_domains[$blog_id] = $domain;
+  }
+  return $https_domains;
+}
+function wp_cli_letsencrypt_domains_with_www($domains){
+  $www_domains = array();
+  foreach($domains as $domain){
+    $www_domains[] = strpos($domain, 'www.') !== false ? str_replace('www.', '', $domain) : 'www.'.$domain;
+  }
+  return $www_domains;
 }
 
 // Certbot helper
@@ -75,6 +102,22 @@ if (class_exists('WP_CLI')){
         'type'     => 'assoc',
         'name'     => 'subdomains',
         'description' => 'include network subdomains (e.g. website.yournetwork.com)',
+        'optional' => true,
+        'default'  => false,
+        'options'  => array( false, true ),
+      ),
+      array(
+        'type'     => 'assoc',
+        'name'     => 'https-only',
+        'description' => 'generate only certificates for https websites (lookup in options for each website)',
+        'optional' => true,
+        'default'  => false,
+        'options'  => array( false, true ),
+      ),
+      array(
+        'type'     => 'assoc',
+        'name'     => 'with-www',
+        'description' => 'include domain with or without www (e.g. yourdomain.com and www.yourdomain.com)',
         'optional' => true,
         'default'  => false,
         'options'  => array( false, true ),
