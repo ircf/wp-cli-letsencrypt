@@ -1,3 +1,5 @@
+![travis-ci status](https://travis-ci.org/ircf/wp-cli-letsencrypt.svg?branch=master)
+
 # wp-cli-letsencrypt
 
 This plugin generates a single SAN SSL Certificate with all domains in a WordPress network from CLI using [Let's Encrypt](https://letsencrypt.org/).

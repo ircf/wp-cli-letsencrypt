@@ -34,7 +34,7 @@ matrix:
 before_script:
   - wget https://dl.eff.org/certbot-auto
   - chmod a+x ./certbot-auto
-  - mv ./certbot-auto /usr/local/bin/
+  - sudo mv ./certbot-auto /usr/local/bin/
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - |
     if [[ ! -z "$WP_VERSION" ]] ; then
