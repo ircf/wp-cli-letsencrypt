@@ -3,7 +3,7 @@
 Plugin Name: WP CLI Let's Encrypt
 Plugin URI: https://ircf.fr/
 Description: A simple CLI SSL certificate generator for WordPress network.
-Version: 0.1
+Version: 0.2
 Author: IRCF
 Author URI: https://ircf.fr/
 License: GPL2

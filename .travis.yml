@@ -35,6 +35,9 @@ before_script:
   - wget https://dl.eff.org/certbot-auto
   - chmod a+x ./certbot-auto
   - sudo mv ./certbot-auto /usr/local/bin/
+  - wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+  - chmod a+x ./wp-cli.phar
+  - sudo mv ./wp-cli.phar /usr/local/bin/wp
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - |
     if [[ ! -z "$WP_VERSION" ]] ; then
