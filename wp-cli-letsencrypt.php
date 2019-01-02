@@ -87,7 +87,7 @@ function wp_cli_letsencrypt_certbot($domains){
 function wp_cli_letsencrypt_command($args, $assoc_args){
   $domains = wp_cli_letsencrypt_domains($assoc_args);
   wp_cli_letsencrypt_clean();
-  $result = exec(wp_cli_letsencrypt_certbot($domain));
+  $result = exec(wp_cli_letsencrypt_certbot($domains));
   if ($result){
     WP_CLI::success( $result );
   }
