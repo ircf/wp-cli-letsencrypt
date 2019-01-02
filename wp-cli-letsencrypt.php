@@ -49,7 +49,7 @@ function wp_cli_letsencrypt_domains($opts = array()){
   }
   if ($opts['https-only']) $domains = wp_cli_letsencrypt_domains_https_only($domains);
   if ($opts['with-www']) $domains = array_merge($domains, wp_cli_letsencrypt_domains_with_www($domains));
-  if ($opts['with-wildcard']) $domains[] = '*.' . DOMAIN_CURRENT_SITE; // TODO wildcard for each domain
+  if ($opts['with-wildcard']) $domains[] = "'*." . DOMAIN_CURRENT_SITE . "'"; // TODO wildcard for each domain
   return $domains;
 }
 function wp_cli_letsencrypt_domains_https_only($domains){
