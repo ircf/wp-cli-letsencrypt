@@ -73,6 +73,7 @@ function wp_cli_letsencrypt_domains_with_www($domains){
 
 // Certbot helper
 function wp_cli_letsencrypt_certbot($domains){
+  global $certbot_cmd;
   $network_domain = DOMAIN_CURRENT_SITE;
   $email = get_option('admin_email');
   $document_root = ABSPATH;
