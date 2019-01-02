@@ -10,7 +10,10 @@ License: GPL2
 */
 
 // Check configuration
-if (exec('which certbot-auto') == '') throw new Exception('certbot is required');
+$certbot_cmd = '';
+if (exec('which certbot-auto') != '') $certbot_cmd = 'certbot-auto';
+if (exec('which certbot') != '') $certbot_cmd = 'certbot';
+if (empty($certbot_cmd)) throw new Exception('certbot-auto or certbot is required');
 if (exec('which wp') == '') throw new Exception('wp cli is required');
 
 // Let's encrypt cleaner helper
@@ -73,7 +76,7 @@ function wp_cli_letsencrypt_certbot($domains){
   $document_root = ABSPATH;
   if (is_array($domains)) $domains = implode(' -d ', $domains);
   if (!empty($domains)) $domains = '-d ' . $domains;
-  $cmd = "certbot-auto certonly --non-interactive --allow-subset-of-names --expand --force-renewal --webroot -m $email -w $document_root -d $network_domain $domains";
+  $cmd = "$certbot_cmd certonly --non-interactive --allow-subset-of-names --expand --force-renewal --webroot -m $email -w $document_root -d $network_domain $domains";
   return exec($cmd);
 }
 
