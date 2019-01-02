@@ -62,4 +62,12 @@ class WpCliLetsencryptTest extends WP_UnitTestCase {
       4 => 'example.fr',
     ), wp_cli_letsencrypt_domains_https_only($domains));
   }
+  
+  function test_wp_cli_letsencrypt_certbot(){
+    $domains = array(4 => 'example.fr');
+    $this->assertEquals(
+      'certbot certonly --non-interactive --allow-subset-of-names --expand --force-renewal --webroot -m admin@example.org -w /tmp/wordpress/ -d example.org -d example.fr',
+      wp_cli_letsencrypt_certbot($domains)
+    );
+  }
 }

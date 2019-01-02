@@ -10,10 +10,11 @@ License: GPL2
 */
 
 // Check configuration
-$certbot_cmd = '';
-if (exec('which certbot-auto') != '') $certbot_cmd = 'certbot-auto';
-if (exec('which certbot') != '') $certbot_cmd = 'certbot';
-if (empty($certbot_cmd)) throw new Exception('certbot-auto or certbot is required');
+global $wp_cli_letsencrypt_certbot_cmd;
+$wp_cli_letsencrypt_certbot_cmd = '';
+if (exec('which certbot-auto') != '') $wp_cli_letsencrypt_certbot_cmd = 'certbot-auto';
+if (exec('which certbot') != '') $wp_cli_letsencrypt_certbot_cmd = 'certbot';
+if (empty($wp_cli_letsencrypt_certbot_cmd)) throw new Exception('certbot-auto or certbot is required');
 if (exec('which wp') == '') throw new Exception('wp cli is required');
 
 // Let's encrypt cleaner helper
@@ -73,21 +74,20 @@ function wp_cli_letsencrypt_domains_with_www($domains){
 
 // Certbot helper
 function wp_cli_letsencrypt_certbot($domains){
-  global $certbot_cmd;
+  global $wp_cli_letsencrypt_certbot_cmd;
   $network_domain = DOMAIN_CURRENT_SITE;
   $email = get_option('admin_email');
   $document_root = ABSPATH;
   if (is_array($domains)) $domains = implode(' -d ', $domains);
   if (!empty($domains)) $domains = '-d ' . $domains;
-  $cmd = "$certbot_cmd certonly --non-interactive --allow-subset-of-names --expand --force-renewal --webroot -m $email -w $document_root -d $network_domain $domains";
-  return exec($cmd);
+  return "$wp_cli_letsencrypt_certbot_cmd certonly --non-interactive --allow-subset-of-names --expand --force-renewal --webroot -m $email -w $document_root -d $network_domain $domains";
 }
 
 // CLI command
 function wp_cli_letsencrypt_command($args, $assoc_args){
   $domains = wp_cli_letsencrypt_domains($assoc_args);
   wp_cli_letsencrypt_clean();
-  $result = wp_cli_letsencrypt_certbot($domains);
+  $result = exec(wp_cli_letsencrypt_certbot($domain));
   if ($result){
     WP_CLI::success( $result );
   }
