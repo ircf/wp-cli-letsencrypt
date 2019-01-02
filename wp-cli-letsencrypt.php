@@ -29,6 +29,7 @@ function wp_cli_letsencrypt_domains($opts = array()){
   if (!isset($opts['subdomains'])) $opts['subdomains'] = false;
   if (!isset($opts['https-only'])) $opts['https-only'] = false;
   if (!isset($opts['with-www'])) $opts['with-www'] = false;
+  if (!isset($opts['wildcard'])) $opts['with-wildcard'] = false;
   global $wpdb;
   $rows = $wpdb->get_results("
     SELECT DISTINCT tmp.blog_id, tmp.domain, tmp.mapping FROM (
@@ -47,6 +48,7 @@ function wp_cli_letsencrypt_domains($opts = array()){
   }
   if ($opts['https-only']) $domains = wp_cli_letsencrypt_domains_https_only($domains);
   if ($opts['with-www']) $domains = array_merge($domains, wp_cli_letsencrypt_domains_with_www($domains));
+  if ($opts['with-wildcard']) $domains[] = '*.' . DOMAIN_CURRENT_SITE; // TODO wildcard for each domain
   return $domains;
 }
 function wp_cli_letsencrypt_domains_https_only($domains){
@@ -121,6 +123,14 @@ if (class_exists('WP_CLI')){
         'type'     => 'assoc',
         'name'     => 'with-www',
         'description' => 'include domain with or without www (e.g. yourdomain.com and www.yourdomain.com)',
+        'optional' => true,
+        'default'  => false,
+        'options'  => array( false, true ),
+      ),
+      array(
+        'type'     => 'assoc',
+        'name'     => 'with-wildcard',
+        'description' => 'include network domain with wildcard (e.g. *.yournetwork.com)',
         'optional' => true,
         'default'  => false,
         'options'  => array( false, true ),
